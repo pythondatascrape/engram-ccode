@@ -1,0 +1,27 @@
+{
+  "description": "engram-ccode hooks — SessionStart identity compression, PostToolUse redundancy detection",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/posttooluse.mjs"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/sessionstart.mjs"
+          }
+        ]
+      }
+    ]
+  }
+}
