@@ -61,8 +61,7 @@ export async function loadYamlOverrides(yamlPath) {
     return parsed;
   } catch (err) {
     if (err.code === 'ENOENT') return null;
-    // Re-throw unexpected errors (bad YAML syntax, permission issues, etc.)
-    throw err;
+    return null;  // Malformed YAML treated as absent
   }
 }
 

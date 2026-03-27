@@ -107,10 +107,9 @@ function detectLang(fullText, sections) {
   const scores = {};
 
   for (const { pattern, lang, weight } of LANG_KEYWORDS) {
-    // Reset lastIndex for global regexes.
+    // Reset lastIndex BEFORE any use of shared global regexes.
     pattern.lastIndex = 0;
     const fullMatches = fullText.match(new RegExp(pattern.source, pattern.flags)) ?? [];
-    pattern.lastIndex = 0;
     const buildMatches = buildText.match(new RegExp(pattern.source, pattern.flags)) ?? [];
 
     scores[lang] = (scores[lang] ?? 0) + fullMatches.length * weight + buildMatches.length * weight * 2;
