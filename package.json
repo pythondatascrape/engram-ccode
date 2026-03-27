@@ -1,0 +1,19 @@
+{
+  "name": "engram-ccode",
+  "version": "0.1.0",
+  "description": "Identity-aware context compression plugin for Claude Code",
+  "type": "module",
+  "main": "server/index.mjs",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "start": "node server/index.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "js-yaml": "^4.1.0"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Eric Meyer"
+  }
+}
