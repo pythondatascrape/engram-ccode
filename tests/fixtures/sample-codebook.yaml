@@ -1,24 +1,19 @@
 # Sample engram-ccode codebook override file
 # Dimension overrides for project-specific identity compression
 
-version: "1.0"
-overrides:
-  - dimension: language
-    value: "Go"
-    aliases:
-      - "golang"
-      - "go lang"
-
-  - dimension: test_style
-    value: "table-driven"
-    aliases:
-      - "table driven tests"
-      - "subtests"
-      - "t.Run patterns"
-
-  - dimension: error_style
-    value: "wrapped-sentinel"
-    aliases:
-      - "fmt.Errorf with %w"
-      - "errors.Is/As"
-      - "sentinel errors"
+dimensions:
+  lang:
+    type: enum
+    value: go
+  session_state:
+    type: enum
+    value: ephemeral
+  custom_rule:
+    type: freeform
+    value: no_interpreter_prompts
+  framework:
+    type: enum
+    value: null
+  db_layer:
+    type: enum
+    value: sqlx
