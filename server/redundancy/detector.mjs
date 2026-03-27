@@ -33,7 +33,7 @@ const DIMENSION_KEYWORDS = {
     ruby: ['ruby ', 'rails ', 'rubygems'],
   },
   err_style: {
-    wrap_errorf: ['fmt.errorf', 'errorf(', 'wrap.*error', 'errors.wrap', '%w', 'wrapping error', 'error wrapping'],
+    wrap_errorf: ['fmt.errorf', 'errorf(', 'wrap error', 'wrapped error', 'errors.wrap', '%w', 'wrapping error', 'error wrapping'],
     sentinel: ['errors.new', 'var err', 'sentinel error'],
     panic: ['panic(', 'recover('],
   },
@@ -143,15 +143,15 @@ export function createDetector(codebook) {
    * @returns {{ redundant: boolean, matches: string[], tokens: number }}
    */
   function check(content) {
+    if (!content || typeof content !== 'string') {
+      return { redundant: false, matches: [], tokens: 0 };
+    }
+
     const tokens = countTokens(content);
 
     // Skip short content.
     if (tokens < MIN_TOKENS) {
       return { redundant: false, matches: [], tokens };
-    }
-
-    if (!content || typeof content !== 'string') {
-      return { redundant: false, matches: [], tokens: 0 };
     }
 
     const lower = content.toLowerCase();
