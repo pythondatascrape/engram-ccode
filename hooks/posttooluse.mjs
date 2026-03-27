@@ -15,7 +15,7 @@ import { createInterface } from 'readline';
 // Rough token estimate: ~4 chars per token
 const CHARS_PER_TOKEN = 4;
 // Minimum token count before we suggest redundancy checking
-const MIN_TOKENS_TO_CHECK = 50;
+const MIN_TOKENS_TO_CHECK = 200;
 // Our own MCP tool prefix — skip these to prevent loops
 const OWN_TOOL_PREFIX = 'mcp__engram-ccode';
 

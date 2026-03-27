@@ -21,9 +21,8 @@ Generate a token savings report for the current session.
 4. Call `mcp__engram-ccode__generate_report` with:
    - `name`: the report name the user provided
    - `description`: the description the user provided (omit if blank)
-   - `save_to_log`: true/false per the user's answer
-   - `pricing_model`: from config if available
-   - `pricing_input_per_1k`: from config if available
+   - `savingsLogPath`: if user said yes to saving, pass `.engram/savings-log.csv`; omit if they said no
+   - `pricing`: if config has pricing info, pass as `{ "model": "...", "inputPer1k": ... }` (nested object)
 
 5. Display the full markdown report returned by the tool.
 
