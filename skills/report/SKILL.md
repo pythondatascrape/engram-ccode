@@ -9,7 +9,7 @@ Generate a token savings report for the current session.
 
 ## Steps
 
-1. Call `mcp__engram-ccode__get_stats` with no arguments to retrieve the current session statistics.
+1. Call `mcp__engram__get_stats` with no arguments to retrieve the current session statistics.
 
 2. Present the stats summary to the user, then ask:
    - **Report name** — suggest the default: `Session Report — {today's date}` (e.g. "Session Report — 2026-03-27")
@@ -18,7 +18,7 @@ Generate a token savings report for the current session.
 
 3. Check if `.engram/config.yaml` exists. If it does, read it and extract any `pricing` fields (`pricing.model`, `pricing.input_per_1k`). Pass those as arguments when calling the report tool.
 
-4. Call `mcp__engram-ccode__generate_report` with:
+4. Call `mcp__engram__generate_report` with:
    - `name`: the report name the user provided
    - `description`: the description the user provided (omit if blank)
    - `savingsLogPath`: if user said yes to saving, pass `.engram/savings-log.csv`; omit if they said no

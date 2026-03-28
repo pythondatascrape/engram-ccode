@@ -1,11 +1,11 @@
 ---
 name: config
-description: Manage engram-ccode plugin settings — redundancy thresholds, notification preferences, pricing, and auto-report configuration
+description: Manage engram plugin settings — redundancy thresholds, notification preferences, pricing, and auto-report configuration
 ---
 
 # Engram Config Manager
 
-Manage engram-ccode plugin settings stored in `.engram/config.yaml`.
+Manage engram plugin settings stored in `.engram/config.yaml`.
 
 ## Default Configuration
 

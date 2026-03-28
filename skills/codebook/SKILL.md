@@ -20,7 +20,7 @@ Present the following options to the user and ask which they want:
 
 ## Subcommand: show
 
-1. Call `mcp__engram-ccode__get_stats` with no arguments.
+1. Call `mcp__engram__get_stats` with no arguments.
 2. Extract the `codebook` field from the result and display each dimension with its key, description, and any example values.
 3. If no codebook is active (the field is empty or absent), inform the user: "No active codebook found." Then offer to derive one — if they agree, proceed with the **init** flow.
 
@@ -29,8 +29,8 @@ Present the following options to the user and ask which they want:
 ## Subcommand: diff
 
 1. Read the current `CLAUDE.md` file from the project root.
-2. Call `mcp__engram-ccode__derive_codebook` with the full CLAUDE.md content as the `content` argument.
-3. Call `mcp__engram-ccode__get_stats` to get the currently active codebook dimensions.
+2. Call `mcp__engram__derive_codebook` with the full CLAUDE.md content as the `content` argument.
+3. Call `mcp__engram__get_stats` to get the currently active codebook dimensions.
 4. Compare the two sets of dimensions:
    - **Added** — dimensions in the derived set that are not in the active codebook
    - **Removed** — dimensions in the active codebook that are not in the derived set
@@ -44,7 +44,7 @@ Present the following options to the user and ask which they want:
 Walk the user through creating a `.engram-codebook.yaml` override file.
 
 1. Read the current `CLAUDE.md` file from the project root.
-2. Call `mcp__engram-ccode__derive_codebook` with the CLAUDE.md content to get auto-derived dimensions. Display them.
+2. Call `mcp__engram__derive_codebook` with the CLAUDE.md content to get auto-derived dimensions. Display them.
 3. For each dimension, ask the user if they want to:
    - **Keep as-is** (default)
    - **Override** — let them provide a custom key, description, or example values
@@ -60,10 +60,10 @@ Walk the user through creating a `.engram-codebook.yaml` override file.
 Check that the active codebook covers all meaningful sections of CLAUDE.md.
 
 1. Read the current `CLAUDE.md` file from the project root.
-2. Call `mcp__engram-ccode__derive_codebook` with the CLAUDE.md content.
-3. Call `mcp__engram-ccode__get_stats` to get the active codebook.
+2. Call `mcp__engram__derive_codebook` with the CLAUDE.md content.
+3. Call `mcp__engram__get_stats` to get the active codebook.
 4. For each top-level section heading in CLAUDE.md, check whether a corresponding dimension exists in the active codebook.
-5. Call `mcp__engram-ccode__check_redundancy` with a sample of the CLAUDE.md content to detect any patterns the codebook is not capturing.
+5. Call `mcp__engram__check_redundancy` with a sample of the CLAUDE.md content to detect any patterns the codebook is not capturing.
 6. Report:
    - Sections with matching codebook coverage (pass)
    - Sections with no coverage (warn)
