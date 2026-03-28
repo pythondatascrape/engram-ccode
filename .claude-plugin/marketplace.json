@@ -1,0 +1,29 @@
+{
+  "name": "engram",
+  "owner": {
+    "name": "Eric Meyer"
+  },
+  "metadata": {
+    "description": "Identity-aware context compression for Claude Code",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "engram",
+      "source": "./",
+      "description": "Compresses project conventions into compact identity blocks, reducing context window waste.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Eric Meyer"
+      },
+      "category": "development",
+      "keywords": [
+        "mcp",
+        "compression",
+        "identity",
+        "context-window",
+        "token-savings"
+      ]
+    }
+  ]
+}
