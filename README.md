@@ -87,4 +87,4 @@ See [INSTRUCTIONS.md](./INSTRUCTIONS.md).
 
 ## License
 
-MIT © 2026 Eric Meyer
+MIT © 2026 Erik Meyer

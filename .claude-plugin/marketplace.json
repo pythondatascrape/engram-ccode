@@ -1,7 +1,7 @@
 {
   "name": "engram",
   "owner": {
-    "name": "Eric Meyer"
+    "name": "Erik Meyer"
   },
   "metadata": {
     "description": "Identity-aware context compression for Claude Code",
@@ -14,7 +14,7 @@
       "description": "Compresses project conventions into compact identity blocks, reducing context window waste.",
       "version": "0.1.0",
       "author": {
-        "name": "Eric Meyer"
+        "name": "Erik Meyer"
       },
       "category": "development",
       "keywords": [

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Identity-aware context compression for Claude Code — reduces redundant identity tokens in conversation context",
   "author": {
-    "name": "Eric Meyer"
+    "name": "Erik Meyer"
   },
   "license": "MIT",
   "keywords": [
