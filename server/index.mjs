@@ -21,7 +21,6 @@ import {
 } from './compression/codebook.mjs';
 import { serialize, formatBlock } from './compression/serializer.mjs';
 import { createDetector } from './redundancy/detector.mjs';
-import { tokenDelta } from './tracking/tokenizer.mjs';
 import { createLedger } from './tracking/ledger.mjs';
 import {
   formatReport,
@@ -175,10 +174,8 @@ async function handleDeriveCodebook(args) {
     };
   }
 
-  // 1. Derive dimensions from content
   let dimensions = deriveDimensions(content);
 
-  // 2. If YAML override path provided, merge overrides
   if (yamlOverridePath) {
     const overrides = await loadYamlOverrides(yamlOverridePath);
     if (overrides) {
@@ -186,17 +183,14 @@ async function handleDeriveCodebook(args) {
     }
   }
 
-  // 3. Create codebook
   activeCodebook = createCodebook(dimensions);
 
-  // 4. Create/update detector
   if (activeDetector) {
     activeDetector.updateCodebook(activeCodebook);
   } else {
     activeDetector = createDetector(activeCodebook);
   }
 
-  // 5. Return codebook as JSON
   return {
     content: [
       { type: 'text', text: JSON.stringify(activeCodebook, null, 2) },
@@ -224,18 +218,10 @@ async function handleCompressIdentity(args) {
     };
   }
 
-  // 1. Serialize
   const serialized = serialize(dimensions);
-
-  // 2. Format block
   const block = formatBlock(serialized);
-
-  // 3. Record compression
   const originalText = JSON.stringify(dimensions);
-  ledger.recordCompression(originalText, block);
-
-  // 4. Compute token delta
-  const stats = tokenDelta(originalText, block);
+  const stats = ledger.recordCompression(originalText, block);
 
   return {
     content: [

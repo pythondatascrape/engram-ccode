@@ -11,10 +11,8 @@
  */
 
 import { createInterface } from 'readline';
+import { countTokens } from '../server/tracking/tokenizer.mjs';
 
-// Rough token estimate: ~4 chars per token
-const CHARS_PER_TOKEN = 4;
-// Minimum token count before we suggest redundancy checking
 const MIN_TOKENS_TO_CHECK = 200;
 // Our own MCP tool prefix — skip these to prevent loops
 const OWN_TOOL_PREFIX = 'mcp__engram-ccode';
@@ -58,11 +56,10 @@ async function main() {
     }
 
     // Skip empty or very short outputs
-    if (!toolOutput || toolOutput.length < MIN_TOKENS_TO_CHECK * CHARS_PER_TOKEN) {
+    const estimatedTokens = countTokens(toolOutput);
+    if (!toolOutput || estimatedTokens < MIN_TOKENS_TO_CHECK) {
       process.exit(0);
     }
-
-    const estimatedTokens = Math.round(toolOutput.length / CHARS_PER_TOKEN);
 
     const message = {
       message: `Tool output detected (${estimatedTokens} tokens) from "${toolName || 'unknown'}". Consider running mcp__engram-ccode__check_redundancy to detect repeated identity context.`

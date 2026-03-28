@@ -7,9 +7,7 @@
 
 import { tokenDelta } from './tokenizer.mjs';
 
-// ---------------------------------------------------------------------------
-// Factory
-// ---------------------------------------------------------------------------
+const MAX_EVENTS = 1000;
 
 /**
  * Create a new session ledger.
@@ -27,16 +25,20 @@ export function createLedger() {
   let compressions = [];
   let redundancies = [];
 
-  // ---------------------------------------------------------------------------
-  // Record a compression event (e.g., at session start when identity block
-  // is built). original/compressed are the full text strings.
-  // ---------------------------------------------------------------------------
+  // Running accumulators — avoids re-reducing arrays on every getStats/shouldNotify call
+  let totalOriginalTokens = 0;
+  let totalCompressedTokens = 0;
+  let totalSaved = 0;
+  let totalRedundantTokens = 0;
+
   /**
    * @param {string} original
    * @param {string} compressed
+   * @returns {{ original: number, compressed: number, saved: number, ratio: number }}
    */
   function recordCompression(original, compressed) {
     const delta = tokenDelta(original, compressed);
+    if (compressions.length >= MAX_EVENTS) compressions.shift();
     compressions.push({
       timestamp: new Date().toISOString(),
       originalTokens: delta.original,
@@ -44,26 +46,27 @@ export function createLedger() {
       saved: delta.saved,
       ratio: delta.ratio,
     });
+    totalOriginalTokens += delta.original;
+    totalCompressedTokens += delta.compressed;
+    totalSaved += delta.saved;
+    return delta;
   }
 
-  // ---------------------------------------------------------------------------
-  // Record a redundancy detection hit.
-  // ---------------------------------------------------------------------------
   /**
    * @param {string[]} matches — dimension keys that were redundantly found
    * @param {number} tokens — approximate token count of the redundant content
    */
   function recordRedundancy(matches, tokens) {
+    const safeTokens = typeof tokens === 'number' ? tokens : 0;
+    if (redundancies.length >= MAX_EVENTS) redundancies.shift();
     redundancies.push({
       timestamp: new Date().toISOString(),
       matches: Array.isArray(matches) ? [...matches] : [],
-      tokens: typeof tokens === 'number' ? tokens : 0,
+      tokens: safeTokens,
     });
+    totalRedundantTokens += safeTokens;
   }
 
-  // ---------------------------------------------------------------------------
-  // Compute and return current session statistics.
-  // ---------------------------------------------------------------------------
   /**
    * @returns {{
    *   sessionStart: string,
@@ -78,11 +81,6 @@ export function createLedger() {
    * }}
    */
   function getStats() {
-    const totalOriginalTokens = compressions.reduce((sum, c) => sum + c.originalTokens, 0);
-    const totalCompressedTokens = compressions.reduce((sum, c) => sum + c.compressedTokens, 0);
-    const totalSaved = compressions.reduce((sum, c) => sum + c.saved, 0);
-    const totalRedundancyHits = redundancies.length;
-    const totalRedundantTokens = redundancies.reduce((sum, r) => sum + r.tokens, 0);
     const overallRatio = totalOriginalTokens > 0
       ? Math.round((totalSaved / totalOriginalTokens) * 10000) / 10000
       : 0;
@@ -94,31 +92,28 @@ export function createLedger() {
       totalOriginalTokens,
       totalCompressedTokens,
       totalSaved,
-      totalRedundancyHits,
+      totalRedundancyHits: redundancies.length,
       totalRedundantTokens,
       overallRatio,
     };
   }
 
-  // ---------------------------------------------------------------------------
-  // Notify check: return true if accumulated redundant tokens exceed threshold.
-  // ---------------------------------------------------------------------------
   /**
    * @param {number} [threshold=10000]
    * @returns {boolean}
    */
   function shouldNotify(threshold = 10000) {
-    const totalRedundantTokens = redundancies.reduce((sum, r) => sum + r.tokens, 0);
     return totalRedundantTokens > threshold;
   }
 
-  // ---------------------------------------------------------------------------
-  // Reset all session stats (start fresh).
-  // ---------------------------------------------------------------------------
   function reset() {
     sessionStart = new Date().toISOString();
     compressions = [];
     redundancies = [];
+    totalOriginalTokens = 0;
+    totalCompressedTokens = 0;
+    totalSaved = 0;
+    totalRedundantTokens = 0;
   }
 
   return {

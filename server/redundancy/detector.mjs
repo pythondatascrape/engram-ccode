@@ -133,12 +133,11 @@ function anyKeywordPresent(lowerContent, keywords) {
  * @returns {{ check: Function, updateCodebook: Function }}
  */
 export function createDetector(codebook) {
-  // Support both { dimensions: {...} } and plain dimension maps.
   let dimensions = extractDimensions(codebook);
+  // Pre-computed keyword cache: avoids re-lowercasing and keyword lookup per check() call
+  let keywordCache = buildKeywordCache(dimensions);
 
   /**
-   * Check tool output content for redundant identity reinforcement.
-   *
    * @param {string} content
    * @returns {{ redundant: boolean, matches: string[], tokens: number }}
    */
@@ -149,7 +148,6 @@ export function createDetector(codebook) {
 
     const tokens = countTokens(content);
 
-    // Skip short content.
     if (tokens < MIN_TOKENS) {
       return { redundant: false, matches: [], tokens };
     }
@@ -157,10 +155,7 @@ export function createDetector(codebook) {
     const lower = content.toLowerCase();
     const matches = [];
 
-    for (const [key, value] of Object.entries(dimensions)) {
-      if (!value || typeof value !== 'string') continue;
-
-      const keywords = keywordsForDimension(key, value.toLowerCase());
+    for (const [key, keywords] of keywordCache) {
       if (anyKeywordPresent(lower, keywords)) {
         matches.push(key);
       }
@@ -174,15 +169,27 @@ export function createDetector(codebook) {
   }
 
   /**
-   * Update the codebook the detector compares against.
-   *
    * @param {{ dimensions: Object } | Object} newCodebook
    */
   function updateCodebook(newCodebook) {
     dimensions = extractDimensions(newCodebook);
+    keywordCache = buildKeywordCache(dimensions);
   }
 
   return { check, updateCodebook };
+}
+
+/**
+ * Build a Map<dimensionKey, keywords[]> from dimensions, pre-computing
+ * all lowercase values and keyword lookups once.
+ */
+function buildKeywordCache(dimensions) {
+  const cache = new Map();
+  for (const [key, value] of Object.entries(dimensions)) {
+    if (!value || typeof value !== 'string') continue;
+    cache.set(key, keywordsForDimension(key, value.toLowerCase()));
+  }
+  return cache;
 }
 
 // ---------------------------------------------------------------------------

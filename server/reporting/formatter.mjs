@@ -7,7 +7,7 @@
  *   - CSV rows for the persistent savings log (formatCsvRow, appendToSavingsLog)
  */
 
-import { readFileSync, writeFileSync, existsSync, appendFileSync } from 'node:fs';
+import { writeFileSync, existsSync, appendFileSync } from 'node:fs';
 import {
   formatTable,
   formatNumber,
@@ -141,6 +141,9 @@ export function formatReport(stats, options = {}) {
   }
   lines.push(SECTION_DIVIDER);
 
+  // Pre-compute dimension frequency (used in sections 4 and 6)
+  const freq = dimensionFrequency(redundancies);
+
   // ── 4. Redundancy Stats ────────────────────────────────────────────────────
   lines.push('## Redundancy Stats\n');
   if (redundancies.length === 0) {
@@ -151,7 +154,6 @@ export function formatReport(stats, options = {}) {
     lines.push('');
 
     // Top redundant dimensions
-    const freq = dimensionFrequency(redundancies);
     if (freq.size > 0) {
       lines.push('**Top redundant dimensions:**\n');
       const sorted = [...freq.entries()].sort((a, b) => b[1] - a[1]);
@@ -179,7 +181,6 @@ export function formatReport(stats, options = {}) {
 
   // ── 6. Per-Dimension Breakdown ─────────────────────────────────────────────
   lines.push('## Per-Dimension Breakdown\n');
-  const freq = dimensionFrequency(redundancies);
   if (freq.size === 0) {
     lines.push('_No dimension matches recorded._\n');
   } else {
@@ -284,8 +285,7 @@ export function formatCsvRow(stats, reportName) {
  * @returns {void}
  */
 export function appendToSavingsLog(logPath, csvRow) {
-  const needsHeader = !existsSync(logPath);
-  if (needsHeader) {
+  if (!existsSync(logPath)) {
     writeFileSync(logPath, CSV_HEADER, 'utf8');
   }
   appendFileSync(logPath, csvRow + '\n', 'utf8');

@@ -10,65 +10,56 @@
  * stdout, which becomes additional context for the assistant.
  */
 
-import { readFileSync, existsSync } from 'fs';
+import { readFileSync } from 'fs';
 import { dirname, join } from 'path';
 
-function findClaudeMdFiles(startDir) {
-  const files = [];
+/**
+ * Walk up from startDir collecting CLAUDE.md paths and their content in one pass.
+ * @returns {Array<{ path: string, content: string }>}
+ */
+function collectClaudeMd(startDir) {
+  const results = [];
   let current = startDir;
 
-  // Walk up the directory tree collecting CLAUDE.md files
   while (current && current !== dirname(current)) {
     const candidate = join(current, 'CLAUDE.md');
-    if (existsSync(candidate)) {
-      files.push(candidate);
+    try {
+      const content = readFileSync(candidate, 'utf8');
+      results.push({ path: candidate, content });
+    } catch {
+      // File doesn't exist or isn't readable — skip
     }
     current = dirname(current);
   }
 
-  return files;
+  return results;
 }
 
 function main() {
   try {
     const projectDir = process.env.CLAUDE_PROJECT_DIR;
     if (!projectDir) {
-      // No project directory — nothing to do
       process.exit(0);
     }
 
-    const claudeMdFiles = findClaudeMdFiles(projectDir);
-    if (claudeMdFiles.length === 0) {
-      // No CLAUDE.md files found — exit silently
+    const files = collectClaudeMd(projectDir);
+    if (files.length === 0) {
       process.exit(0);
     }
 
-    // Read all found CLAUDE.md files and concatenate
-    let combinedContent = '';
-    for (const filePath of claudeMdFiles) {
-      try {
-        const content = readFileSync(filePath, 'utf8');
-        combinedContent += content + '\n';
-      } catch {
-        // Skip unreadable files
-      }
-    }
-
+    const combinedContent = files.map((f) => f.content).join('\n');
     if (!combinedContent.trim()) {
       process.exit(0);
     }
 
-    const charCount = combinedContent.length;
-    const fileList = claudeMdFiles.join(', ');
+    const fileList = files.map((f) => f.path).join(', ');
 
-    // Output the suggestion for the assistant to act on
     const message = {
-      message: `Found CLAUDE.md with ${charCount} chars (${claudeMdFiles.length} file(s): ${fileList}). Deriving codebook for identity compression. Please call mcp__engram-ccode__derive_codebook with the CLAUDE.md content, then call mcp__engram-ccode__compress_identity to compress the project identity for this session.`
+      message: `Found CLAUDE.md with ${combinedContent.length} chars (${files.length} file(s): ${fileList}). Deriving codebook for identity compression. Please call mcp__engram-ccode__derive_codebook with the CLAUDE.md content, then call mcp__engram-ccode__compress_identity to compress the project identity for this session.`
     };
 
     process.stdout.write(JSON.stringify(message) + '\n');
   } catch {
-    // Never crash — hook failures should be silent
     process.exit(0);
   }
 }

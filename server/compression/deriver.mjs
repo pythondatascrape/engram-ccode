@@ -196,9 +196,15 @@ function detectBuild(fullText, sections) {
   return found.join(',');
 }
 
+/**
+ * Get scoped text for a set of headings, falling back to fullText if no sections match.
+ */
+function sectionText(sections, headings, fullText) {
+  return bodiesForHeadings(sections, headings) || fullText;
+}
+
 function detectTesting(fullText, sections) {
-  const testText = bodiesForHeadings(sections, ['test', 'conventions', 'best practices']);
-  const searchText = testText || fullText;
+  const searchText = sectionText(sections, ['test', 'conventions', 'best practices'], fullText);
   const parts = [];
 
   if (/\btable[- ]driven\b/i.test(searchText)) parts.push('table_driven');
@@ -218,8 +224,7 @@ function detectTesting(fullText, sections) {
 }
 
 function detectErrStyle(fullText, sections) {
-  const convText = bodiesForHeadings(sections, ['conventions', 'best practices', 'error']);
-  const searchText = convText || fullText;
+  const searchText = sectionText(sections, ['conventions', 'best practices', 'error'], fullText);
   const parts = [];
 
   if (/fmt\.Errorf.*%w/i.test(searchText) || /wrap.*err/i.test(searchText)) parts.push('wrap_errorf');
@@ -233,8 +238,7 @@ function detectErrStyle(fullText, sections) {
 }
 
 function detectLogging(fullText, sections) {
-  const convText = bodiesForHeadings(sections, ['conventions', 'best practices', 'logging']);
-  const searchText = convText || fullText;
+  const searchText = sectionText(sections, ['conventions', 'best practices', 'logging'], fullText);
 
   if (/\bslog\b/i.test(searchText)) {
     if (/structured/i.test(searchText)) return 'slog_structured';
@@ -264,8 +268,7 @@ function detectArch(fullText) {
 }
 
 function detectConcurrency(fullText, sections) {
-  const convText = bodiesForHeadings(sections, ['conventions', 'best practices', 'concurrency']);
-  const searchText = convText || fullText;
+  const searchText = sectionText(sections, ['conventions', 'best practices', 'concurrency'], fullText);
   const parts = [];
 
   if (/\berrgroup\b/i.test(searchText)) parts.push('errgroup');
@@ -298,8 +301,7 @@ function detectTransport(fullText) {
 }
 
 function detectPkgStyle(fullText, sections) {
-  const convText = bodiesForHeadings(sections, ['conventions', 'best practices', 'package', 'structure', 'not to do']);
-  const searchText = convText || fullText;
+  const searchText = sectionText(sections, ['conventions', 'best practices', 'package', 'structure', 'not to do'], fullText);
   const parts = [];
 
   if (/no\s+circular/i.test(searchText) || /circular\s+import/i.test(searchText)) parts.push('no_circular');
