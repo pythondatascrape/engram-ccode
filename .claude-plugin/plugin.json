@@ -1,5 +1,5 @@
 {
-  "name": "engram-ccode",
+  "name": "engram",
   "version": "0.1.0",
   "description": "Identity-aware context compression for Claude Code — reduces redundant identity tokens in conversation context",
   "author": {
@@ -15,7 +15,7 @@
   ],
   "skills": "./skills/",
   "mcpServers": {
-    "engram-ccode": {
+    "engram": {
       "command": "node",
       "args": ["${CLAUDE_PLUGIN_ROOT}/server.bundle.mjs"]
     }
