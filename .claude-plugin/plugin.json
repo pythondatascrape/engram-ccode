@@ -19,5 +19,4 @@
       "args": ["${CLAUDE_PLUGIN_ROOT}/server/index.mjs"]
     }
   },
-  "skills": "../skills/"
 }
