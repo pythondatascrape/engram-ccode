@@ -2,3 +2,11 @@ node_modules/
 package-lock.json
 *.log
 .DS_Store
+
+# Claude Code project instructions (project-specific, not part of plugin)
+CLAUDE.md
+**/CLAUDE.md
+
+# Engram per-project runtime files generated in the target project
+.engram/
+.engram-codebook.yaml
