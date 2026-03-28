@@ -1,6 +1,6 @@
 ---
 name: report
-description: Generate a token savings report showing compression and redundancy statistics for the current session
+description: "engram: Generate a token savings report showing compression and redundancy statistics for the current session"
 ---
 
 # Engram Report

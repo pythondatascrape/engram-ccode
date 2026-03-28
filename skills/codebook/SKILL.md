@@ -1,6 +1,6 @@
 ---
 name: codebook
-description: Manage the identity codebook — show the active codebook, diff against CLAUDE.md, initialize new codebooks, or validate existing ones
+description: "engram: Manage the identity codebook — show the active codebook, diff against CLAUDE.md, initialize new codebooks, or validate existing ones"
 ---
 
 # Engram Codebook Manager
