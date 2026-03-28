@@ -13,7 +13,7 @@
     "context-window",
     "token-savings"
   ],
-  "skillsPath": "skills",
+  "skills": "./skills/",
   "mcpServers": {
     "engram-ccode": {
       "command": "node",
