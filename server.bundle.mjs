@@ -23988,7 +23988,24 @@ function createLedger() {
 }
 
 // server/reporting/formatter.mjs
-import { writeFileSync, existsSync, appendFileSync } from "node:fs";
+import { writeFileSync, existsSync, appendFileSync, mkdirSync, renameSync } from "node:fs";
+import { homedir as _homedir } from "node:os";
+import { join as _join } from "node:path";
+const _engramStatsDir = _join(_homedir(), ".engram");
+const _engramStatsPath = _join(_engramStatsDir, "stats.json");
+const _engramStatsTmp = _join(_engramStatsDir, ".stats.json.tmp");
+function flushEngramStats(stats) {
+  try {
+    mkdirSync(_engramStatsDir, { recursive: true, mode: 0o700 });
+    writeFileSync(_engramStatsTmp, JSON.stringify({
+      totalOriginalTokens: stats.totalOriginalTokens,
+      totalCompressedTokens: stats.totalCompressedTokens,
+      totalSaved: stats.totalSaved,
+      totalCalls: stats.compressions.length,
+    }), { mode: 0o600 });
+    renameSync(_engramStatsTmp, _engramStatsPath);
+  } catch {}
+}
 
 // server/reporting/templates/report.md.mjs
 var SECTION_DIVIDER = "---\n";
@@ -24345,6 +24362,7 @@ async function handleCompressIdentity(args) {
   const block = formatBlock(serialized);
   const originalText = JSON.stringify(dimensions);
   const stats = ledger.recordCompression(originalText, block);
+  flushEngramStats(ledger.getStats());
   return {
     content: [
       {
